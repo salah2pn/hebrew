@@ -4,45 +4,297 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض كلمات عشوائية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Rubik', sans-serif;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Rubik', sans-serif;
             text-align: center;
             margin: 20px;
+            background-color: #f4f4f4;
         }
-        .words-container {
-            margin-top: 20px;
-            padding: 10px;
+        table {
+            width: 70%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
             border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .word {
-            margin: 5px;
+            padding: 20px;
+            text-align: center;
             font-size: 18px;
         }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        td:nth-child(1), th:nth-child(1) {
+            width: 40%;
+        }
+        td:nth-child(2), th:nth-child(2) {
+            width: 40%;
+        }
+
+        /* إضافة مظهر مستطيل إدخال العلامة */
+        .score-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            z-index: 20; /* فوق الـ blur */
+        }
+        .score-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .score-container button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+        .blur-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            display: none;
+        }
+
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            z-index: 20; /* فوق الـ blur */
+            display: none;
+        }
+
+        .feedback img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .test-history {
+            margin-top: 40px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+
+        .test-history table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        .test-history th, .test-history td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .test-history th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        
+.rainbowbtn {
+    margin: 20px auto; /* لجعل الزر في الوسط */
+    padding: 20px 40px; /* نفس حجم الأزرار الأخرى */
+    border: none;
+    outline: none;
+    color: #000; /* لون الخط أسود */
+    background-color: #fff; /* لون الخلفية أبيض */
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 30px; /* تأكد من أنها نفس القيمة المستخدمة في الأزرار الأخرى */
+    font-size: 24px; /* حجم خط يتناسب مع الأزرار الأخرى */
+    width: 200px; /* نفس عرض الأزرار الأخرى */
+    height: 87px; /* نفس ارتفاع الأزرار الأخرى */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s; /* تأثيرات التفاعل */
+    box-shadow: 0 0 20px rgb(55, 51, 51);
+    background: transparent;
+    
+}
+
+
+.rainbowbtn::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    background-color: #ffffff;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: transparent;
+
+    border-radius: 30px; /* تأكد من أنها نفس القيمة المستخدمة في الأزرار الأخرى */
+}
+  /* glow */
+  .rainbowbtn::before {
+    content: "";
+    background: linear-gradient(
+      45deg,
+      #FF0000, #FF7300, #FFFB00, #48FF00,
+      #00FFD5, #002BFF, #FF00C8, #FF0000
+    );
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 600%;
+    z-index: -1;
+    width: calc(100% + 4px);
+    height:  calc(100% + 4px);
+    filter: blur(8px);
+    animation: glowing 20s linear infinite;
+    transition: opacity .3s ease-in-out;
+    border-radius: 25px;
+    opacity: 1;
+    font-size: 100px;
+    color: white;
+  }
+  
+  @keyframes glowing {
+    0% {background-position: 0 0;}
+    50% {background-position: 400% 0;}
+    100% {background-position: 0 0;}
+  }
+  
+
+
+
+  .rainbowbtn:hover {
+    color: #000;
+    color: white;
+/* لون تفاعل الزر عند التمرير */
+    color: #000000; /* تغيير لون النص عند التمرير */
+    box-shadow: 0 0 20px rgba(55, 51, 51, 0.3); /* إضافة ظل للزر */
+    transform: scale(1.05); /* تكبير الزر عند التمرير */
+}
+
+/* تقليل حجم الأزرار عند عرضها على شاشة الهاتف */
+@media (max-width: 768px) {
+    .subject-button {
+        height: 100px; /* تقليل الارتفاع */
+        width: 300px; /* تقليل العرض */
+        font-size: 20px; /* تقليل حجم الخط */
+    }
+
+    .rainbowbtn {
+        height: 100px; /* تقليل الارتفاع */
+        width: 300px; /* تقليل العرض */
+        font-size: 20px; /* تقليل حجم الخط */
+    }
+}
+
     </style>
 </head>
 <body>
     <h1>عرض كلمات عشوائية</h1>
     <button onclick="generateWords()">عرض 20 كلمة عشوائية</button>
-    <button onclick="translateWords()">ترجمة الكلمات</button>
-    <div class="words-container" id="wordsContainer">
-        <!-- الكلمات العشوائية ستظهر هنا -->
+    <button id="toggleAnswers" onclick="toggleAnswers()">عرض الإجابات</button>
+    <table>
+        <thead>
+            <tr>
+                <th>עברית</th>
+                <th>العربية</th>
+            </tr>
+        </thead>
+        <tbody id="wordsTable">
+            <!-- سيتم إضافة الكلمات هنا -->
+        </tbody>
+    </table>
+    
+    <!-- زر "انهيت!" -->
+    <button id="finishButton" onclick="showScoreInput()">انهيت!</button>
+
+    <!-- مستطيل إدخال العلامة مع blur -->
+    <div id="blurBackground" class="blur-background"></div>
+    <div id="scoreContainer" class="score-container" style="display: none;">
+        <label for="scoreInput">اكتب العلامة:</label>
+        <input type="number" id="scoreInput" max="20" min="0" oninput="validateScore()">
+        <button onclick="submitScore()">حسنا</button>
     </div>
-    <script src="script.js"></script>
+    
 
-    <p>81 -> 100</p>
-    <a href="81.jpg" download="الصورة_81.jpg">
-        <img src="81.jpg" alt="الصورة 81" style="width: 300px; height: auto; margin-right: 100;">
-    </a>
+    <!-- إشعار مع الصورة والتعليق -->
+    <div id="feedback" class="feedback">
+        <img id="feedbackImage" src="" alt="Feedback"/>
+        <p id="feedbackText"></p>
+        <button onclick="closeFeedback()">حسناً</button>
+    </div>
 
-</body>
-</html>
+    <!-- سجل الاختبارات -->
+    <div id="testHistory" class="test-history">
+                <div class="subject-buttons">
+            <button style=" font-size: 20px; color: white;"class="rainbowbtn" id="randomExamButton" class="subject-button">زر البطاطا الخارقة</button>
+        </div>
+        <h3>سجل العلامات</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الساعة</th>
+                    <th>العلامة</th>
+                    <th>نوع البطاطا</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody id="historyList">
+                <!-- سجل العلامات سيتم إضافته هنا -->
+            </tbody>
+        </table>
+        
+    </div>
 
-<script>
-
-    // قائمة الكلمات ومعانيها
-<script>const wordPairs = {
+    <script>const wordPairs = {
     "אָמוּר": "يُفترض فيه",
     "אֲנָכִי": "عمودي",
     "בָּא לִידֵי בִּיטּוּי": "انعكس، عكس",
@@ -103,37 +355,185 @@
     "לתרום": "أن يتبرّع / أن يساهم"
 };
 
-// دالة لتوليد 20 كلمة عشوائية دون تكرار
+
+let currentWords = [];
+let answersVisible = false;
+let testHistory = [];
+
 function generateWords() {
-    const wordsContainer = document.getElementById('wordsContainer');
-    wordsContainer.innerHTML = ''; // تفريغ الحاوية
-
-    // اختيار 20 كلمة عشوائية
+    const wordsTable = document.getElementById('wordsTable');
+    wordsTable.innerHTML = '';
+    currentWords = [];
+    answersVisible = false;
+    document.getElementById('toggleAnswers').textContent = "عرض الإجابات";
+    
     const shuffledWords = Object.keys(wordPairs).sort(() => Math.random() - 0.5).slice(0, 20);
-
-    // إضافة الكلمات إلى الصفحة
+    
     shuffledWords.forEach(word => {
-        const wordElement = document.createElement('div');
-        wordElement.className = 'word';
-        wordElement.textContent = word;
-        wordsContainer.appendChild(wordElement);
+        const row = document.createElement('tr');
+        const hebrewCell = document.createElement('td');
+        const arabicCell = document.createElement('td');
+        
+        let hideHebrew = Math.random() < 0.5;
+        
+        if (hideHebrew) {
+            hebrewCell.textContent = "_______";
+            arabicCell.innerHTML = `<span class='bold'>${wordPairs[word]}</span>`; 
+        } else {
+            hebrewCell.innerHTML = `<span class='bold'>${word}</span>`;
+            arabicCell.textContent = "_______";
+        }
+        
+        currentWords.push({ hebrew: word, arabic: wordPairs[word], hideHebrew });
+        
+        row.appendChild(hebrewCell);
+        row.appendChild(arabicCell);
+        wordsTable.appendChild(row);
     });
 }
 
-// دالة لترجمة الكلمات
-function translateWords() {
-    const wordsContainer = document.getElementById('wordsContainer');
-    const words = wordsContainer.querySelectorAll('.word');
-
-    // ترجمة كل كلمة بناءً على الكائن
-    words.forEach(wordElement => {
-        const currentWord = wordElement.textContent;
-        const translatedWord = wordPairs[currentWord];
-        if (translatedWord) {
-            wordElement.textContent = translatedWord;
+function toggleAnswers() {
+    const rows = document.querySelectorAll('#wordsTable tr');
+    answersVisible = !answersVisible;
+    document.getElementById('toggleAnswers').textContent = answersVisible ? "إخفاء الإجابات" : "عرض الإجابات";
+    
+    rows.forEach((row, index) => {
+        if (currentWords[index]) {
+            if (answersVisible) {
+                row.children[0].innerHTML = currentWords[index].hideHebrew ? `${currentWords[index].hebrew}` : `<span class='bold'>${currentWords[index].hebrew}</span>`;
+                row.children[1].innerHTML = currentWords[index].hideHebrew ? `<span class='bold'>${currentWords[index].arabic}</span>` : `${currentWords[index].arabic}`;
+            } else {
+                row.children[0].innerHTML = currentWords[index].hideHebrew ? "_______" : `<span class='bold'>${currentWords[index].hebrew}</span>`;
+                row.children[1].innerHTML = currentWords[index].hideHebrew ? `<span class='bold'>${currentWords[index].arabic}</span>` : "_______";
+            }
         }
     });
 }
 
-</script>
+function validateScore() {
+        var scoreInput = document.getElementById('scoreInput');
+        var score = scoreInput.value;
 
+        // التأكد أن القيمة بين 0 و 20
+        if (score < 0) {
+            scoreInput.value = 0;
+        } else if (score > 20) {
+            scoreInput.value = 20;
+        }
+    }
+    
+function showScoreInput() {
+    document.getElementById('blurBackground').style.display = 'block';
+    document.getElementById('scoreContainer').style.display = 'block';
+}
+
+function submitScore() {
+    const score = parseInt(document.getElementById('scoreInput').value);
+    let feedbackText = "";
+    let potatoType = "";
+    let potatoImage = "";
+
+    // تحديد نوع البطاطا بناءً على العلامة
+    if (score === 20) {
+        potatoType = "بطاطا شريرة";
+        potatoImage = "images/20.png";  // استبدل هذا الرابط بصورة نوع البطاطا الشريرة
+    } else if (score >= 18) {
+        potatoType = "بطاطا حارة";
+        potatoImage = "images/18-19.webp";  // استبدل هذا الرابط بصورة نوع البطاطا الحارة
+    } else if (score >= 16) {
+        potatoType = "بطاطة العيد ميلاد تاعت احمد";
+        potatoImage = "images/16-17.png";  // استبدل هذا الرابط بصورة بطاطا العيد ميلاد
+    } else if (score >= 14) {
+        potatoType = "بطاطا سعيدة";
+        potatoImage = "images/14-15.png";  // استبدل هذا الرابط بصورة البطاطا السعيدة
+    } else if (score >= 11) {
+        potatoType = "بطاطة مستائة";
+        potatoImage = "images/11-13.png";  // استبدل هذا الرابط بصورة البطاطا المستائة
+    } else if (score >= 7) {
+        potatoType = "بطاطا زنجية";
+        potatoImage = "images/8-10.jpg";  // استبدل هذا الرابط بصورة البطاطا الزنجية
+    } else if (score >= 4) {
+        potatoType = "بطاطا مهروسة";
+        potatoImage = "images/4-7.png";  // استبدل هذا الرابط بصورة البطاطا المهروسة
+    } else {
+        potatoType = "بطاطا مذبوحة";
+        potatoImage = "images/0-3.png";  // استبدل هذا الرابط بصورة البطاطا المذبوحة
+    }
+
+    // عرض الإشعار مع الصورة والنص
+    document.getElementById('feedbackImage').src = potatoImage;
+    document.getElementById('feedbackText').textContent = potatoType;
+    document.getElementById('feedback').style.display = 'block';
+
+    // إضافة البيانات إلى جدول السجل
+    const historyList = document.getElementById('historyList');
+    const currentDate = new Date();
+    const dateString = currentDate.toLocaleDateString();
+    const timeString = currentDate.toLocaleTimeString();
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${dateString}</td>
+        <td>${timeString}</td>
+        <td>${score}</td>
+        <td><img src="${potatoImage}" alt="${potatoType}" width="50" height="50"></td>
+        <td>${potatoType}</td>
+    `;
+
+    historyList.appendChild(row); // إضافة الصف إلى جدول السجل
+    document.getElementById('testHistory').style.display = 'block';
+
+    // إخفاء مستطيل الإدخال
+    document.getElementById('blurBackground').style.display = 'none';
+    document.getElementById('scoreContainer').style.display = 'none';
+}
+
+
+function closeFeedback() {
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('blurBackground').style.display = 'none';
+}
+
+function updateTestHistory() {
+    const historyList = document.getElementById('historyList');
+    historyList.innerHTML = '';
+    testHistory.forEach((entry) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = entry;
+        historyList.appendChild(listItem);
+    });
+    document.getElementById('testHistory').style.display = testHistory.length > 0 ? 'block' : 'none';
+}
+
+// الحصول على الزر
+const superPotatoBtn = document.getElementById('randomExamButton');
+superPotatoBtn.style.display = 'none'; // مخفي افتراضيًا
+
+// تعديل submitScore لعرض الزر فقط عند 20
+const originalSubmitScore = submitScore; // حفظ الوظيفة الأصلية
+
+submitScore = function() {
+    originalSubmitScore(); // استدعاء الوظيفة الأصلية أولاً
+
+    const score = parseInt(document.getElementById('scoreInput').value);
+    if (score === 20) {
+        superPotatoBtn.style.display = 'inline-block'; // إظهار الزر
+    } else {
+        superPotatoBtn.style.display = 'none'; // إخفاء الزر
+    }
+};
+
+// إضافة حدث عند الضغط على زر البطاطا الخارقة
+superPotatoBtn.addEventListener('click', () => {
+    const feedback = document.getElementById('feedback');
+    const feedbackImage = document.getElementById('feedbackImage');
+    
+    feedbackImage.src = 'images/super-potato.png'; // ضع هنا رابط صورة البطاطا الخارقة
+    feedbackText.textContent = "بطاطا خارقة! 🥔⚡"; // نص مؤقت
+    feedback.style.display = 'block';
+    
+});
+
+    </script>
+</body>
+</html>
